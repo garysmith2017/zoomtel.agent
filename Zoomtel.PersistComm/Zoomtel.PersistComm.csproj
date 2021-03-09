@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Context\**" />
+    <EmbeddedResource Remove="Context\**" />
+    <None Remove="Context\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="EFCoreRepository\Repositories\MySqlRepository.cs" />
+    <Compile Remove="EFCoreRepository\Repositories\NpgsqlRepository.cs" />
+    <Compile Remove="EFCoreRepository\Repositories\OracleRepository.cs" />
+    <Compile Remove="EFCoreRepository\Repositories\SqliteRepository.cs" />
+    <Compile Remove="EFCoreRepository\Repositories\SqlRepository.cs" />
+    <Compile Remove="Query\ExportModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zoomtel.Entity\Zoomtel.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+</Project>

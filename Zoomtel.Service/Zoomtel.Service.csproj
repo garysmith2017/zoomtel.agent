@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="3.10.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Quartz" Version="3.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zoomtel.Auth\Zoomtel.Auth.csproj" />
+    <ProjectReference Include="..\Zoomtel.AutoMapper\Zoomtel.AutoMapper.csproj" />
+    <ProjectReference Include="..\Zoomtel.Cahe\Zoomtel.Cache.csproj" />
+    <ProjectReference Include="..\Zoomtel.Entity\Zoomtel.Entity.csproj" />
+    <ProjectReference Include="..\Zoomtel.Persist\Zoomtel.Persist.csproj" />
+    <ProjectReference Include="..\Zoomtel.Quartz.Core\Zoomtel.Quartz.Core.csproj" />
+    <ProjectReference Include="..\Zoomtel.Quartz\Zoomtel.Quartz.Abstractions.csproj" />
+    <ProjectReference Include="..\Zoomtel.Utils\Zoomtel.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.identitymodel.tokens\5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\system.identitymodel.tokens.jwt\5.3.0\lib\netstandard2.0\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

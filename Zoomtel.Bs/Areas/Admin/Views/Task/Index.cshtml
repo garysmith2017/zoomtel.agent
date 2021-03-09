@@ -1,0 +1,596 @@
+﻿
+@{
+    ViewData["Title"] = "ModuleMenus";
+    Layout = "~/Areas/Admin/Views/Shared/_VueLayout.cshtml";
+}
+
+@section header{
+
+}
+    <div id="app">
+        <div id='wrapper'>
+       
+            <div class="container">
+                <div class="handle-box">
+                    <el-form :inline="true" :model="queryModel">
+                     
+                        <el-form-item>
+                            <el-button type="primary" icon="el-icon-plus" v-on:click='handleAddGroup' class="handle-del mr10">新增分组</el-button>
+
+                        </el-form-item>
+                    </el-form>
+
+                </div>
+                <div class='main-box'>
+                    <el-card class="box-card" v-for='item in groupList' :key='item.id' style=" margin-bottom: 10px;">
+                        <div slot="header" class="clearfix">
+                            <span>{{item.groupName}}</span>
+                            <el-button style="float: right; padding: 3px 10px;color:red" type="text" v-on:click="handleDeleteGroup(item.id)">删除分组</el-button>
+                            <el-button style="float: right; padding: 3px 10px" type="text" v-on:click="handleAddTask(item.id)">新增任务</el-button>
+
+                        </div>
+
+                        <el-table :data="item.taskList" stripe style="width: 100%">
+                            <el-table-column prop="taskName" label="名称" width="180">
+                            </el-table-column>
+                            <!-- <el-table-column prop="className" label="类名" width="180">
+                        </el-table-column> -->
+                            <el-table-column prop="triggerType" label="触发器类型">
+                                <template slot-scope="scope">
+                                    <el-tag>
+                                        {{ scope.row.triggerType==0?"Cron":"通用" }}
+                                    </el-tag>
+
+
+                                </template>
+
+
+                            </el-table-column>
+                            <el-table-column prop="intervalInSeconds" label="间隔时间" width="80px">
+                                <template slot-scope="scope">
+                                    <span style="margin-left:10px;">{{ scope.row.intervalInSeconds }} 秒</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="repeatCount" label="执行次数" width="80px">
+                                <template slot-scope="scope">
+                                    <span style="margin-left:10px;">{{ scope.row.repeatCount }} 次</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="cron" label="CRON表达式">
+                                <template slot-scope="scope">
+                                    <el-tag type="success">
+                                        <i class="el-icon-time"></i>
+                                        <span style="margin-left:10px;">{{ scope.row.cron }}</span>
+                                    </el-tag>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="address" label="有效期">
+                                <template slot-scope="scope">
+
+                                    <span>{{ scope.row.beginDate|fmtDateTime("yyyy-MM-dd") }} ~ {{scope.row.endDate|fmtDateTime("yyyy-MM-dd")}}</span>
+
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="status" label="状态" width="100px">
+                                <template slot-scope="scope">
+
+
+                                    <el-tag v-if="scope.row.status === 0" type="info" effect="dark" size="small">停止</el-tag>
+                                    <el-tag v-else-if="scope.row.status === 1" type="success" effect="dark" size="small">运行中</el-tag>
+                                    <el-tag v-else-if="scope.row.status === 2" type="warning" effect="dark" size="small">暂停</el-tag>
+                                    <el-tag v-else-if="scope.row.status === 3" type="primary" effect="dark" size="small">已完成</el-tag>
+                                    <el-tag v-else type="danger" effect="dark" size="small">异常</el-tag>
+                                </template>
+
+                            </el-table-column>
+
+                            <el-table-column prop='log' label="日志" width="100px">
+                                <template slot-scope="scope">
+                                    <el-button size='mini' type="text" v-on:click='handleTaskLog(scope.row.id)' icon='el-icon-s-claim'>日志</el-button>
+
+
+                                </template>
+
+                            </el-table-column>
+
+                            <el-table-column prop="address" label="操作">
+                                <template slot-scope="scope">
+
+                                    <el-button size='mini' type="text" v-on:click='ResumeTask(scope.row.id)' icon='el-icon-video-play' v-show='scope.row.status==0||scope.row.status==2||scope.row.status==3'>运行</el-button>
+
+                                    <el-button size='mini' v-on:click='PauseTask(scope.row.id)' type="text" icon='el-icon-video-pause' v-show='scope.row.status==1'>暂停</el-button>
+                                    <el-button size='mini' v-on:click='StopTask(scope.row.id)' type="text" icon='el-icon-remove-outline' v-show='scope.row.status==1'>停止</el-button>
+                                    <el-button size='mini' type="text" icon="el-icon-edit" v-on:click='handleEditTask(scope.$index, scope.row)'>编辑</el-button>
+
+                                    <el-button size='mini' type="text" icon="el-icon-delete" v-on:click='handleDeleteTask(scope.row.id)'>删除</el-button>
+                                </template>
+
+                            </el-table-column>
+                        </el-table>
+
+
+                    </el-card>
+
+
+
+                </div>
+
+
+            </div>
+
+            <!--任务增改弹出框-->
+            <el-dialog :title="!formModel.id?'新增任务':'编辑任务'" :visible.sync="formVisible" width="650px">
+                <el-form ref="formModel" :model="formModel" :inline="true" label-width="90px">
+                    <el-form-item label="任务分组">
+                        <el-select v-model='formModel.group'>
+                            <el-option v-for='item in groupList' :label='item.groupName' :value='item.id' :key='item.id'></el-option>
+
+                        </el-select>
+
+                    </el-form-item>
+
+
+
+                    <el-form-item label="触发器类型">
+                        <el-radio-group v-model="formModel.triggerType">
+                            <el-radio-button label="0">Cron表达式</el-radio-button>
+                            <el-radio-button label="1">通用</el-radio-button>
+                        </el-radio-group>
+
+                    </el-form-item>
+
+                    <el-form-item label="任务名称">
+                        <el-input v-model="formModel.taskName"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="任务编码">
+                        <el-input v-model="formModel.taskCode"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="类名">
+                        <el-select v-model='formModel.className' style='width: 480px;'>
+                            <el-option :label="item.label+'['+item.value+']'" :value="item.value" v-for='item in taskImpList' :key='item.value'></el-option>
+
+                        </el-select>
+
+                    </el-form-item>
+
+
+                    <!-- <el-form-item label="开始时间">
+                    <el-input v-model="formModel.beginDate"></el-input>
+                </el-form-item> -->
+
+                    <el-form-item label="结束时间">
+                        <!-- <el-input v-model="formModel.endDate"></el-input> -->
+                        <el-date-picker v-model="formModelDateRang" type="daterange" align="right" unlink-panels range-separator="至"
+                                        start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="daterangOptions" value-format='yyyy-MM-dd'>
+                        </el-date-picker>
+                    </el-form-item>
+
+                    <el-form-item label="间隔时间" v-show='formModel.triggerType==1'>
+                        <el-input placeholder="请输入执行间隔" v-model="formModel.intervalInSeconds" style="width: 190px;">
+                            <template slot="append">
+                                秒
+                            </template>
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item label="执行次数" v-show='formModel.triggerType==1'>
+                        <el-input placeholder="请输入执行次数" v-model="formModel.repeatCount" style="width: 190px;">
+                            <template slot="append">
+                                次
+                            </template>
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item label="Cron表达式" v-show='formModel.triggerType==0'>
+                        <el-input v-model="formModel.cron" placeholder="请输入cron表达式" style='width: 480px;'></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button v-on:click="formVisible = false">取 消</el-button>
+                    <el-button type="primary" v-on:click="saveForm">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <!-- 分组增改弹出框 -->
+            <el-dialog :title="!groupFormModel.id?'新增任务分组':'编辑任务分组'" :visible.sync="groupFromVisible" width="30%">
+                <el-form ref="groupFormModel" :model="groupFormModel" label-width="70px">
+                    <el-form-item label="分组名称">
+                        <el-input v-model="groupFormModel.groupName"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="分组编码">
+                        <el-input v-model="groupFormModel.groupCode"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button v-on:click="groupFromVisible = false">取 消</el-button>
+                    <el-button type="primary" v-on:click="saveGroupForm">确 定</el-button>
+                </span>
+            </el-dialog>
+
+            <!--任务日志弹出-->
+            <el-dialog :title="'任务日志'" :visible.sync="logListVisible" width="50%">
+                <el-form :inline="true" :model="logQueryModel">
+                    <el-form-item label="日志类型">
+                        <el-select v-model='logQueryModel.type'>
+                            <el-option :label="'全部'" :value="null"></el-option>
+
+                            <el-option :label="'信息'" :value="0"></el-option>
+                            <el-option :label="'调试'" :value="1"></el-option>
+
+                            <el-option :label="'异常'" :value="2"></el-option>
+
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="消息">
+                        <el-input v-model="logQueryModel.msg" placeholder="查询消息"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="handleSearchLog">查询</el-button>
+
+                    </el-form-item>
+                </el-form>
+
+                <el-table :data="logList" stripe style="width: 100%">
+
+                    <el-table-column prop="type" label="日志类型" width="180">
+                        <template slot-scope="scope">
+
+                            <el-tag v-if="scope.row.type === 0" type="success" effect="dark" size="small">信息</el-tag>
+                            <el-tag v-else-if="scope.row.type === 1" type="warning" effect="dark" size="small">调试</el-tag>
+                            <el-tag v-else type="danger" effect="dark" size="small">异常</el-tag>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column prop="msg" label="消息">
+                    </el-table-column>
+                    <el-table-column prop="createdTime" label="发生时间" width="180">
+                    </el-table-column>
+                </el-table>
+
+                <div class="pagination" style="text-align: center;">
+                    <el-pagination background v-on:current-change="handleLogCurrentChange" v-on:size-change='handleLogSizeChange'
+                                   :current-page.sync="logQueryModel.pageModel.page" :page-sizes="[10, 20, 50, 80]" :page-size.sync="logQueryModel.pageModel.rows"
+                                   layout="total,sizes, prev, pager, next" :total="logListTotal">
+                    </el-pagination>
+
+                </div>
+            </el-dialog>
+
+
+
+        </div>
+
+
+
+
+    </div>
+
+
+@section footer{
+    <script type="text/javascript">
+        Vue.filter('fmtDateTime', function (val, fmt) { // val表示要被处理的数据
+            // 过滤器业务逻辑，要有返回值
+            return formatDateTime(val, fmt);
+        });
+
+        new Vue({
+            el:"#app",
+            data: function () {
+                return {
+                    logQueryModel: {
+                        pageModel: {
+                            page: 1,
+                            rows: 10
+                        },
+                        taskId: "",
+                        msg: "",
+                        type: null
+
+                    },
+
+                    groupList: [],
+
+                    groupFromVisible: false,
+                    groupFormModel: {
+                        id: "",
+                        groupName: "",
+                        groupCode: ""
+
+                    },
+                    list: [],
+                    //日志
+                    logList: [],
+                    logListTotal: 0,
+                    logListVisible: false,
+
+                    taskImpList: [],
+                    formVisible: false,
+                    formModelDateRang: '',
+                    formModel: {
+                        triggerType: 0,
+                        group: ""
+
+                    },
+                    daterangOptions: {
+                        shortcuts: [{
+                            text: '最近一周',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近一个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }, {
+                            text: '最近三个月',
+                            onClick(picker) {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                                picker.$emit('pick', [start, end]);
+                            }
+                        }]
+                    }
+
+                }
+            },
+            created() {
+                this.getGroupData();
+                this.getTaskImpList();
+
+            },
+            methods: {
+
+                getTaskImpList: function () {
+                    var that = this;
+                    request.post("/admin/task/select").then(function (res) {
+                        console.log(res.data);
+
+                        that.taskImpList = res.data;
+                        // that.total = res.data.total;
+                    });
+
+                },
+                getGroupData: function () {
+                    var that = this;
+                    request.post("/admin/taskgroup/query", {
+
+                        pageModel: {
+                            page: 1,
+                            rows: 30
+                        }
+
+                    }).then(function (res) {
+                        console.log(res.data);
+                        res.data.rows.forEach((item) => {
+                            item.taskList = [];
+                        })
+                        that.groupList = res.data.rows;
+                        that.getDatas();
+                        // that.total = res.data.total;
+                    });
+
+                },
+                handleTaskLog: function (id) {
+                    var that = this;
+
+                    that.logQueryModel.taskId = id;
+                    that.logQueryModel.pageModel.page = 1;
+                    that.logQueryModel.type = null;
+                    that.logQueryModel.msg = "";
+                    that.getTaskLog(function () {
+
+                        that.logListVisible = true;
+
+                    })
+
+                },
+                getTaskLog: function (fc) {
+                    var that = this;
+
+                    // if (!that.logQueryModel.type) {
+                    // 	delete that.logQueryModel.type;
+                    // }
+                    request.post("/admin/task/log", that.logQueryModel).then(function (res) {
+                        console.log(res.data);
+
+                        var tasks = res.data.rows;
+                        that.logList = res.data.rows;
+                        that.logListTotal = res.data.total;
+                        fc();
+                        // that.total = res.data.total;
+                    });
+
+                },
+
+                handleLogCurrentChange: function (index) {
+                    this.logQueryModel.pageModel.page = index;
+                    this.getTaskLog();
+                },
+                handleLogSizeChange: function () {
+                    this.getTaskLog();
+
+                },
+
+                handleSearchLog: function () {
+                    this.getTaskLog();
+
+                },
+                getDatas: function () {
+                    var that = this;
+                    request.post("/admin/task/query", {
+                        pageModel: {
+                            page: 1,
+                            rows: 30
+                        }
+                    }).then(function (res) {
+                        console.log(res.data);
+                        if (res.data.total > 0) {
+                            var tasks = res.data.rows;
+                            that.groupList.forEach((item) => {
+
+                                var resultTaskList = tasks.filter((item2) => {
+
+                                    return item2.group == item.id;
+                                });
+                                console.log("filter:" + item.id + resultTaskList);
+                                item.taskList = resultTaskList;
+
+
+                            });
+
+                        }
+                        // that.total = res.data.total;
+                    });
+                },
+                handleEditTask: function (index, row) {
+                    this.formModelDateRang = [];
+                    this.formModelDateRang[0] = row.beginDate;
+                    this.formModelDateRang[1] = row.endDate;
+                    this.formModel = row;
+                    this.formVisible = true;
+                },
+                handleAddTask: function (groupid) {
+                    console.log(groupid);
+                    this.formModel.groupid = groupid;
+                    this.formVisible = true;
+                },
+                handleAddGroup: function () {
+                    this.groupFormModel = {
+                        id: null,
+                        groupName: "",
+                        groupCode: ""
+                    };
+                    this.groupFromVisible = true;
+                },
+                handleDeleteGroup: function (id) {
+                    var that = this;
+                    this.$confirm('此操作将永久删除选定任务分组, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+
+                        request.delete("/admin/taskgroup/Delete?id=" + id).then(res => {
+                            that.$message.success(res.data.msg);
+                            that.getGroupData();
+
+                        });
+                    });
+
+                },
+                saveGroupForm: function () {
+                    if (this.groupFormModel.id != null) {
+                        this.saveGroupEdit();
+                    } else {
+                        this.saveGroupAdd();
+                    }
+
+                },
+                saveGroupEdit: function () {
+                    var that = this;
+                    request.post("/admin/TaskGroup/Update", that.groupFormModel).then(function (res) {
+                        that.groupFromVisible = false;
+                        that.$message.success(res.data.msg);
+                        that.getGroupData();
+                    });
+                },
+                saveGroupAdd: function () {
+                    var that = this;
+                    request.post("/admin/TaskGroup/Add", that.groupFormModel).then(function (res) {
+                        that.groupFormVisible = false;
+                        that.$message.success(res.data.msg);
+                        that.getGroupData();
+                    });
+                },
+                saveForm: function () {
+                    // console.log(this.formModelDateRang);
+                    if (this.formModelDateRang && this.formModelDateRang.length == 2) {
+                        this.formModel.beginDate = this.formModelDateRang[0];
+                        this.formModel.endDate = this.formModelDateRang[1];
+                    }
+                    if (this.formModel.id != null) {
+                        this.saveEdit();
+                    } else {
+                        this.saveAdd();
+                    }
+                },
+                saveAdd: function () {
+                    var that = this;
+                    request.post("/admin/Task/Add", that.formModel).then(function (res) {
+                        that.formVisible = false;
+                        that.$message.success(res.data.msg);
+                        that.getGroupData();
+                    });
+
+                },
+                saveEdit: function () {
+                    var that = this;
+                    request.post("/admin/Task/Update", that.formModel).then(function (res) {
+                        that.formVisible = false;
+                        that.$message.success(res.data.msg);
+                        that.getGroupData();
+                    });
+
+                },
+                handleDeleteTask: function (id) {
+                    var that = this;
+                    this.$confirm('此操作将永久删除选定任务, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+
+                        request.delete("/admin/task/Delete?id=" + id).then(res => {
+                            that.$message.success(res.data.msg);
+                            that.getDatas();
+
+                        });
+                    });
+
+                },
+                ResumeTask: function (id) {
+                    var that = this;
+                    request.post("/admin/task/Resume?id=" + id).then(res => {
+                        that.$message.success(res.data.msg);
+                        that.getDatas();
+
+                    });
+
+                },
+                PauseTask: function (id) {
+                    var that = this;
+                    request.post("/admin/task/Pause?id=" + id).then(res => {
+                        that.$message.success(res.data.msg);
+                        that.getDatas();
+
+                    });
+
+                },
+                StopTask: function (id) {
+                    var that = this;
+                    request.post("/admin/task/Stop?id=" + id).then(res => {
+                        that.$message.success(res.data.msg);
+                        that.getDatas();
+
+                    });
+
+                }
+
+
+            }
+        })
+
+    </script>
+
+}

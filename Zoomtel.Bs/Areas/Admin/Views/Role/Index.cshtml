@@ -1,0 +1,382 @@
+﻿
+@{
+    ViewData["Title"] = "ModuleMenus";
+    Layout = "~/Areas/Admin/Views/Shared/_VueLayout.cshtml";
+}
+
+@section header{
+    
+    }
+<div id="app">
+    <div id='wrapper'>
+       
+
+        <div class="container">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <i class="el-icon-s-order"></i>  角色管理
+                </div>
+
+                <div class="handle-box">
+                    <el-form :inline="true" :model="queryModel">
+                        <el-form-item label="角色名">
+                            <el-input v-model="queryModel.RoleName" placeholder="请输入角色名查询"></el-input>
+                        </el-form-item>
+
+                        <el-form-item>
+                            <el-button type="primary" icon="el-icon-search" v-on:click="handleSearch">查询</el-button>
+
+                            <el-button type="primary" icon="el-icon-plus" v-on:click='handleAdd' class="handle-del mr10">新增角色</el-button>
+
+                            <el-button type="danger" icon="el-icon-delete" class="handle-del mr10" v-on:click="handleDelAllSelection">批量删除</el-button>
+
+                        </el-form-item>
+                    </el-form>
+
+                </div>
+
+                <el-table v-on:selection-change="handleSelectionChange" :data="tableData" style="width: 100%;margin-bottom: 20px;"
+                          row-key="id" border>
+                    <el-table-column type="selection" width="55">
+                    </el-table-column>
+                    <el-table-column prop="id" label="id" sortable width="180">
+                    </el-table-column>
+                    <el-table-column prop="roleName" label="角色名" sortable width="180">
+                    </el-table-column>
+                    <el-table-column prop="status" width="80px" label="启用">
+                        <template slot-scope="scope">
+                            <el-switch v-on:change="statusChange(scope.row)" v-model="scope.row.status" active-color="#13ce66" inactive-color="#ddd">
+                            </el-switch>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="modifiedTime" label="更新时间">
+                    </el-table-column>
+                    <el-table-column prop="modifier" label="更新人">
+                    </el-table-column>
+
+                    <el-table-column label="操作" width="280px" align="center">
+                        <template slot-scope="scope">
+                            <el-button type="text" icon="el-icon-lock" v-on:click="handleSettingPermission(scope.$index, scope.row)">权限</el-button>
+
+                            <el-button type="text" icon="el-icon-edit" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button type="text" icon="el-icon-delete" class="red" v-on:click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+
+
+                <div class="pagination" style="text-align: center;">
+                    <el-pagination v-on:current-change="handleCurrentChange" :current-page.sync="queryModel.pageModel.page" :page-sizes="[10, 20, 50, 80]"
+                                   :page-size="queryModel.pageModel.rows" layout="total,sizes, prev, pager, next" :total="total">
+                    </el-pagination>
+
+                </div>
+
+
+                </el-card>
+        </div>
+
+        <!--授权弹出框-->
+        <el-dialog title="角色授权" :visible.sync="roleSettingVisible" width="80%">
+
+            <el-tabs type="border-card">
+                <el-tab-pane label="菜单授权">
+                    <el-form label-width="120px">
+                        <el-form-item label="角色名称">
+                            <el-input v-model="roleSettingModel.roleName" readonly="readonly"></el-input>
+                        </el-form-item>
+                        <el-form-item label="菜单列表">
+                            <el-tree ref='menuTree' :default-checked-keys="roleSettingModel.menuChecked" node-key="id" :data="roleSettingModel.menuTree"
+                                     :props="{children: 'children',label: 'text'}" show-checkbox></el-tree>
+
+                        </el-form-item>
+
+                    </el-form>
+
+                </el-tab-pane>
+                <el-tab-pane label="接口授权">
+
+                    <el-form label-width="120px">
+                        <el-form-item label="角色名称">
+                            <el-input v-model="roleSettingModel.roleName" readonly="readonly"></el-input>
+                        </el-form-item>
+                        <el-form-item label="接口列表">
+                            <el-tree ref='permissionTree' node-key="id" :default-checked-keys="roleSettingModel.permissionChecked" :data="roleSettingModel.permissionTree"
+                                     :props="{children: 'children',label: 'text'}" show-checkbox></el-tree>
+
+                        </el-form-item>
+
+                    </el-form>
+
+                </el-tab-pane>
+
+
+            </el-tabs>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button v-on:click="roleSettingVisible = false" >取 消</el-button>
+                <el-button type="primary" v-on:click="saveSetting" :disabled="!canSaveBind">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 增改弹出框 -->
+        <el-dialog :title="formModel.id>0?'新增角色':'编辑角色'" :visible.sync="formVisible" width="30%">
+            <el-form ref="formMain" :model="formModel" label-width="70px">
+                <el-form-item label="角色名称">
+                    <el-input v-model="formModel.roleName"></el-input>
+                </el-form-item>
+
+                <el-form-item label="角色备注">
+                    <el-input v-model="formModel.remark"></el-input>
+                </el-form-item>
+
+                <el-form-item label="是否启用">
+                    <el-switch v-model="formModel.status" active-color="#13ce66" inactive-color="#ddd">
+                    </el-switch>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button v-on:click="formVisible = false">取 消</el-button>
+                <el-button type="primary" v-on:click="saveForm">确 定</el-button>
+            </span>
+        </el-dialog>
+
+    </div>
+
+</div>
+
+
+@section footer{
+    <script type="text/javascript">
+
+
+
+       var vueItem= new Vue({
+            el:"#app",
+            data: function () {
+                return {
+                    queryModel: {
+                        RoleName: "",
+
+                        pageModel: {
+                            page: 1,
+                            rows: 10
+                        }
+                    },
+                    tableChecked: [],
+                    tableData: [],
+                    total: 0,
+                    formVisible: false,
+                    formModel: {
+                        id: 0,
+                        status: true
+                    },
+                    menuLoadSuccess: false,
+                    permissionLoadSuccess:false,
+                    roleSettingVisible: false,
+                    roleSettingModel: {
+                        roleName: "",
+                        roleId: 0,
+                        permissionTree: [],
+                        permissionChecked: [],
+                        menuChecked: [],
+                        menuTree: []
+
+                    }
+
+                }
+           },
+           computed: {
+               canSaveBind: function () {
+
+                   if (this.menuLoadSuccess && this.permissionLoadSuccess) {
+                       return true;
+                   }
+                   return false;
+               }
+
+           },
+            created() {
+                var that = this;
+                this.getDatas();
+
+            },
+            methods: {
+                getDatas: function () {
+                    var that = this;
+                    request.post("/admin/role/query", that.queryModel).then(function (res) {
+                        console.log(res.data);
+                        that.tableData = res.data.rows;
+                        that.total = res.data.total;
+                    });
+                },
+                statusChange: function (obj) {
+                    var that = this;
+                    request.put("/admin/Role/StatusChange?id=" + obj.id + "&status=" + obj.status, {}).then(function (res) {
+                        that.$message.success(res.data.msg);
+                    });
+                    console.log(obj);
+                },
+                handleAdd: function () {
+                    this.formModel = {
+                        status: true,
+                        roleName: "",
+                        remark: "",
+                        id: 0
+
+                    };
+                    this.formVisible = true;
+                },
+                handleEdit: function (index, row) {
+                    this.formModel = row;
+                    this.formVisible = true;
+                },
+                BindTree: function (roleId, tree) {
+                    var that = this;
+                    var url = "/admin/role/QueryPermissions";
+                    if (tree == "menuTree") {
+
+                        url = "/admin/role/QueryMenus";
+                    }
+                    request.get(url + "?roleid=" + roleId).then(function (result) {
+                        if (result.data.code == 1) {
+                            if (tree == "menuTree") {
+                                that.roleSettingModel.menuChecked = result.data.data;
+                                that.menuLoadSuccess = true;
+                            } else {
+                                that.roleSettingModel.permissionChecked = result.data.data;
+                                that.permissionLoadSuccess = true;
+                            }
+                        }
+
+                    })
+                },
+                handleSettingPermission: function (index, row) {
+                    var that = this;
+                    that.roleSettingVisible = true;
+                    that.roleSettingModel.roleName = row.roleName;
+                    that.roleSettingModel.roleId = row.id;
+
+                    that.menuLoadSuccess = false;
+                    that.permissionLoadSuccess = false;
+
+                    request.get("/admin/menu/tree").then(function (res) {
+
+                        
+                        that.roleSettingModel.menuTree = res.data.data;
+                        that.roleSettingModel.menuChecked = [];
+                        that.BindTree(row.id, 'menuTree');
+                    });
+                    request.get("/admin/Permission/tree").then(function (res) {
+
+                    
+                        that.roleSettingModel.permissionTree = res.data.data;
+                        that.roleSettingModel.permissionChecked = [];
+                        that.BindTree(row.id, 'permissionTree');
+                    });
+                },
+                saveSetting: function () {
+                    var that = this;
+                    var permissionChecks = this.$refs.permissionTree.getCheckedKeys();
+                    var menuChecks = this.$refs.menuTree.getCheckedKeys();
+
+
+                    console.log(menuChecks);
+                    //return;
+                    request.put('/admin/role/bindmenus', { Menus: menuChecks, roleid: that.roleSettingModel.roleId }).then(function (res) {
+                        request.put('/admin/role/BindPermissions', { Permissions: permissionChecks, roleid: that.roleSettingModel.roleId }).then(function (res) {
+
+                            that.$message.success(res.data.msg);
+                            that.roleSettingVisible = false;
+                        });
+
+
+                    })
+
+                },
+                saveForm: function () {
+                    if (this.formModel.id) {
+                        this.saveEdit();
+                    } else {
+                        this.saveAdd();
+                    }
+
+                },
+                saveEdit: function () {
+                    var that = this;
+                    request.post("/admin/Role/Update", that.formModel).then(function (res) {
+                        that.formVisible = false;
+                        that.$message.success(res.data.msg);
+                        that.getDatas();
+                    });
+                },
+                saveAdd: function () {
+                    var that = this;
+                    request.post("/admin/Role/Add", that.formModel).then(function (res) {
+                        that.formVisible = false;
+                        that.$message.success(res.data.msg);
+                        that.getDatas();
+                    });
+                },
+                handleSelectionChange: function (val) {
+                    this.tableChecked = val;
+                },
+                handleSelectionChange2: function (val) {
+                    console.log(val);
+                },
+                handleCurrentChange: function (index) {
+                    this.queryModel.pageModel.page = index;
+                    this.getDatas();
+                },
+                handleSearch: function () {
+                    this.getDatas();
+
+                },
+                handleDelAllSelection: function () {
+                    var that = this;
+                    if (this.tableChecked.length == 0) {
+                        this.$message.warning("请选择要操作的项！");
+                        return;
+                    }
+
+                    this.$confirm('此操作将永久删除选定项, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var ids = [];
+                        that.tableChecked.forEach(element => {
+                            ids.push(element.id)
+                        });
+
+                        request.delete("/admin/role/DeleteList?ids=" + ids.join('&ids=')).then(res => {
+                            that.$message.success(res.data.msg + ",删除数据" + res.data.data + "条！");
+                            that.getDatas();
+
+                        });
+                    });
+
+                },
+                handleDelete: function (index, row) {
+                    var that = this;
+                    this.$confirm('此操作将永久删除该项, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        request.delete("/admin/role/Delete?id=" + row.id).then(function (res) {
+                            that.$message.success(res.data.msg);
+                            that.getDatas();
+                        });
+
+                    });
+
+                }
+
+
+            }
+
+        });
+
+    </script>
+
+}

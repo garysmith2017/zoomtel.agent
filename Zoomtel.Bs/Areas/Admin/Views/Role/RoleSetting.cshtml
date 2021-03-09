@@ -1,0 +1,270 @@
+﻿
+@{
+    ViewData["Title"] = "RoleSetting";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div id="tt" class="easyui-tabs" fit="true">
+    <div title="菜单授权" style="padding:20px;display:none;">
+
+        <div id="MenuToolbar" style="padding:1px;height:auto;">
+            <table>
+                <tr>
+                    @*<td>
+                        所属系统：<div id="cmbox">	</div>
+                    </td>*@
+                    <td>
+                        <a href="javascript:void(0)" iconCls="icon-myarrowout" class="easyui-linkbutton" onclick="expandAll('#MenuTree')">全部展开</a>
+                        <a href="javascript:void(0)" iconCls="icon-myarrowin" class="easyui-linkbutton" onclick="collapseAll('#MenuTree')">全部收起</a>
+                        <a href="javascript:void(0)" iconCls="icon-save" class="easyui-linkbutton" onclick="saveMenu()">保存</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="MenuTree"></div>
+
+
+    </div>
+    <div title="接口授权" data-options="closable:true" style="overflow:auto;padding:20px;display:none;">
+        <div id="PermissionToolbar" style="padding:1px;height:auto;">
+            <table>
+                <tr>
+                    @*<td>
+                        所属系统：<div id="cmbox">	</div>
+                    </td>*@
+                    <td>
+                        <a href="javascript:void(0)" iconCls="icon-myarrowout" class="easyui-linkbutton" onclick="expandAll('#PermissionTree')">全部展开</a>
+                        <a href="javascript:void(0)" iconCls="icon-myarrowin" class="easyui-linkbutton" onclick="collapseAll('#PermissionTree')">全部收起</a>
+                        <a href="javascript:void(0)" iconCls="icon-save" class="easyui-linkbutton" onclick="savePermission()">保存</a>
+                        @*<a href="javascript:void(0)" iconCls="icon-remove" class="easyui-linkbutton" onclick="cancelPermission()">取消</a>*@
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="PermissionTree"></div>
+    </div>
+   
+</div>
+
+
+<script type="text/javascript">
+    var roleId = '@ViewBag.roleid';
+    jQuery(function ($) {
+
+
+        $.extend($.fn.treegrid.methods, {
+            //iscontains是否包含父节点（即子节点被选中时是否也取父节点）
+            getAllChecked: function (jq, iscontains) {
+                var keyValues = new Array();
+                /*
+                  tree-checkbox2 有子节点被选中的css
+                  tree-checkbox1 节点被选中的css
+                  tree-checkbox0 节点未选中的css
+                */
+                var checkNodes = jq.treegrid("getPanel").find(".tree-checkbox1");
+                for (var i = 0; i < checkNodes.length; i++) {
+                    var keyValue1 = $($(checkNodes[i]).closest('tr')[0]).attr("node-id");
+                    keyValues.push(keyValue1);
+                }
+                if (iscontains) {
+                    var childCheckNodes = jq.treegrid("getPanel").find(".tree-checkbox2");
+                    for (var i = 0; i < childCheckNodes.length; i++) {
+                        var keyValue2 = $($(childCheckNodes[i]).closest('tr')[0]).attr("node-id");
+                        keyValues.push(keyValue2);
+                    }
+                }
+                return keyValues;
+            }
+        });
+
+        $('#MenuTree').treegrid({
+            iconCls: 'icon-ok',
+            rownumbers: true,
+            animate: true,
+            fitColumns: true,
+            height: '${centerheight}',
+            url: baseURL + '/admin/menu/tree?easyui=true',
+            method: 'get',
+            idField: 'id',
+            treeField: 'text',
+            showFooter: true,
+            toolbar: '#MenuToolbar',
+            checkbox: true,
+            lines: true,
+            columns: [[
+                { field: 'text', title: '菜单名称', width: 120 },
+                {
+                    field: 'type', title: '菜单url', width: 80, formatter: function (value, row, index) {
+                        return row.item.url ;
+                    }
+                },
+                { field: 'id', title: 'code', width: 180 }
+            ]],
+            onLoadSuccess: function () {
+                BindTree("#MenuTree");
+
+                expandAll('#MenuTree');
+                expandAll('#MenuTree');//只有展开2次才能展开3级菜单
+                // $('.panel datagrid easyui-fluid .panel-header').css('display','none');
+            }
+        });
+
+        $('#PermissionTree').treegrid({
+            iconCls: 'icon-ok',
+            rownumbers: true,
+            animate: true,
+            fitColumns: true,
+           // height: '${centerheight}',
+            url: baseURL + '/admin/Permission/tree?easyui=true',
+            method: 'get',
+            
+            idField: 'id',
+            treeField: 'text',
+            showFooter: true,
+            toolbar: '#PermissionToolbar',
+            checkbox: true,
+            lines: true,
+            columns: [[
+                { field: 'text', title: '权限名称', width: 120 },
+                {
+                    field: 'type', title: '权限类型', width: 80, formatter: function (value, row, index) {
+                        return row.item.isPage ? "页面" : "接口";
+                    }
+                },
+
+                //{field:'menulevel',title:'菜单级次',width:40},
+                { field: 'id', title: 'code', width: 180 },
+                //{ field: 'seq', title: '排序', width: 40 },
+                {
+                    field: 'path', title: '路径', width: 80, formatter: function (value, row, index) {
+                        return row.path.toString();
+                    }
+                }
+            ]],
+            onLoadSuccess: function () {
+           
+              
+                BindTree("#PermissionTree");
+                expandAll("#PermissionTree");
+                expandAll("#PermissionTree");//只有展开2次才能展开3级菜单
+                // $('.panel datagrid easyui-fluid .panel-header').css('display','none');
+            }
+        });
+
+        //}
+        //});
+
+
+
+    })
+    function BindTree(tree) {
+        var url = "/admin/role/QueryPermissions";
+        if (tree == "#MenuTree") {
+
+            url = "/admin/role/QueryMenus";
+        }
+        $.get(url+"?roleid=" + roleId, function (result) {
+            if (result.code == 1) {
+                var ids = result.data.join(',');
+
+                $(tree).treegrid("clearChecked");
+                if (ids) {
+                    var execIds = ids.split(",");
+                    if (execIds) {
+                        for (i = 0; i < execIds.length; i++) {
+                            try {
+                                $(tree).treegrid("checkNode", execIds[i]);
+                            } catch (e) { }
+                        }
+                    }
+                }
+
+            }
+
+        })
+    }
+
+
+    function formatProgress(value) {
+        if (value) {
+            var s = '<div style="width:100%;border:1px solid #ccc">' +
+                '<div style="width:' + value + '%;background:#cc0000;color:#fff">' + value + '%' + '</div>'
+            '</div>';
+            return s;
+        } else {
+            return '';
+        }
+    }
+
+    function saveMenu() {
+
+        var menuIds = $("#MenuTree").treegrid("getAllChecked", false);
+        if (menuIds.length == 0) {
+            $.messager.alert("操作提示", "请选择需要授权的菜单！", "info");
+            return;
+
+        }
+        $.ajaxjson(baseURL + "/admin/role/BindMenus", { Menus: menuIds, roleid: roleId }, function (data) {
+            $.messager.show({
+                title: '提示',
+                msg: data.msg
+            });
+
+        })
+      
+
+    }
+
+    function savePermission() {
+
+        var menuIds = $("#PermissionTree").treegrid("getAllChecked", false);
+        if (menuIds.length == 0) {
+            $.messager.alert("操作提示", "请选择需要授权的菜单！", "info");
+            return;
+
+        }
+        $.ajaxjson(baseURL + "/admin/role/BindPermissions", { Permissions: menuIds, roleid: roleId }, function (data) {
+            $.messager.show({
+                title: '提示',
+                msg: data.msg
+            });
+
+        })
+          
+    }
+
+
+    function cancel() {
+        $.messager.confirm("操作提示", "您确定要取消操作吗？", function (data) {
+            if (data) {
+                parent.$("#rolewin").window("close");
+                //window.opener = window;
+                // var win = window.open("","_self");
+                // win.close();
+                // top.close();
+            }
+        });
+
+    }
+
+  
+
+    function collapseAll(tree) {
+        var node = $(tree).treegrid('getSelected');
+        if (node) {
+            $(tree).treegrid('collapseAll', node.target);
+        }
+        else {
+            $(tree).treegrid('collapseAll');
+        }
+    }
+
+    function expandAll(tree) {
+        var node = $(tree).treegrid('getSelected');
+        if (node) {
+            $(tree).treegrid('expandAll', node.target);
+        }
+        else {
+            $(tree).treegrid('expandAll');
+        }
+    }
+</script>

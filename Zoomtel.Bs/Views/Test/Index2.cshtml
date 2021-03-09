@@ -1,0 +1,32 @@
+﻿
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_VueLayout.cshtml";
+
+}
+
+<div id="app">
+    <el-input-number v-model="num" v-on:change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+
+
+</div>
+
+
+@section footer{
+<script src="~/v/components/zt-select.js"></script>
+<script type="text/javascript">
+    // 定义一个名为 button-counter 的新组件
+   
+    var vue = new Vue({
+        el: "#app",
+        data: {
+            num:0
+        },
+       methods: {
+           handleChange(formName) {
+              
+            }
+        }
+
+    });
+</script>
+}

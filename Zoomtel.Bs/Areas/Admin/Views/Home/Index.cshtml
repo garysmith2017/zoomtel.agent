@@ -1,0 +1,725 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Zoomtel</title>
+    <link rel="stylesheet" href="~/v/element-ui/lib/theme-chalk/index.css" />
+
+    <link rel="stylesheet" href="~/v/css/main.css" />
+
+    <style>
+        /**自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+            -webkit-border-radius: 2em;
+            -moz-border-radius: 2em;
+            border-radius: 2em;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            /* background-color: #9c9da0; */
+            /* -webkit-border-radius: 2em; */
+            -moz-border-radius: 2em;
+            /* border-radius: 2em */
+        }
+
+
+
+        html,
+        body,
+        #app,
+        .wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+
+        .main-container {
+            /* z-index: 999; */
+            min-height: 100%;
+            transition: margin-left .28s;
+            margin-left: 210px;
+            position: relative;
+            display: flex;
+            flex-flow: column;
+        }
+
+        .content-box {
+            flex: 1;
+            display: flex;
+            flex-flow: column;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            flex-flow: column;
+        }
+            .content iframe{
+
+                flex:1
+            }
+
+            .main-container.content-collapse {
+                margin-left: 65px;
+                /*z-index: 9999;*/
+            }
+
+        .hideSidebar .sidebar-container {
+            width: 65px !important;
+        }
+
+
+        .footer-copyright {
+            min-height: 55px;
+            line-height: 55px;
+            color: rgba(0,0,0,.45);
+            text-align: center;
+            /* border-top: 1px dashed #dcdfe6; */
+        }
+        /*logo*/
+        .sidebarLogoFade-enter-active {
+            transition: opacity 1.5s;
+        }
+
+        .sidebarLogoFade-enter,
+        .sidebarLogoFade-leave-to {
+            opacity: 0;
+        }
+
+        .sidebar-logo-container {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            background: #2b2f3a;
+            text-align: center;
+            overflow: hidden;
+        }
+
+            .sidebar-logo-container.collapse .sidebar-logo-link {
+                vertical-align: middle;
+                padding: 8px
+            }
+
+            .sidebar-logo-container .sidebar-logo-link {
+                height: 100%;
+                width: 100%;
+            }
+
+                .sidebar-logo-container .sidebar-logo-link .sidebar-logo {
+                    width: 32px;
+                    height: 32px;
+                    vertical-align: middle;
+                    margin-right: 12px;
+                }
+
+                .sidebar-logo-container .sidebar-logo-link .sidebar-title {
+                    display: inline-block;
+                    margin: 0;
+                    color: #fff;
+                    font-weight: 600;
+                    line-height: 50px;
+                    font-size: 14px;
+                    font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+                    vertical-align: middle;
+                }
+
+
+
+
+                .sidebar-logo-container .sidebar-logo-link .collapse .sidebar-logo {
+                    margin-right: 0px;
+                }
+
+        /*菜单*/
+        .header .el-menu--horizontal > .el-menu-item, .header .el-menu--horizontal > .el-submenu .el-submenu__title {
+            height: 50px;
+            line-height: 50px;
+        }
+
+        .sidebar-container {
+            transition: width 0.28s;
+            width: 210px !important;
+            /*background-color: #304156;*/
+            background-color: #2b2f3a;
+            height: 100%;
+            position: fixed;
+            font-size: 0px;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1001;
+            overflow: hidden;
+            /*overflow-x:hidden;*/
+        }
+
+        .sidebar {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0px;
+            bottom: 0;
+            /* overflow-y: scroll; */
+        }
+
+            .sidebar::-webkit-scrollbar {
+                width: 0;
+            }
+
+        .sidebar-el-menu:not(.el-menu--collapse) {
+            width: 210px;
+        }
+
+        .scrollbar-wrapper {
+            height: 100%;
+            overflow-x: hidden !important;
+        }
+
+        .sidebar > ul {
+            height: 100%;
+        }
+
+
+        .header {
+            line-height: 50px;
+            height: 50px;
+            overflow: hidden;
+            position: relative;
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+            box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+            box-sizing: border-box;
+            /*   position: relative;
+        box-sizing: border-box;
+        width: 100%;
+        height: 70px;
+        font-size: 22px;
+        color: #fff; */
+        }
+
+        .breadcrumb-container {
+            float: left;
+        }
+
+        .collapse-btn {
+            float: left;
+            padding: 15px 21px;
+            cursor: pointer;
+            line-height: 50px;
+        }
+
+            .collapse-btn:hover {
+                background-color: white;
+                color: #606266;
+            }
+
+        .header .logo {
+            float: left;
+            width: 250px;
+            line-height: 50px;
+        }
+
+        .header-right {
+            float: right;
+            padding-right: 50px;
+        }
+
+        .header-user-con {
+            display: flex;
+            height: 50px;
+            align-items: center;
+        }
+
+        .btn-fullscreen {
+            /* padding: 10px 0px; */
+            transform: rotate(45deg);
+            margin-right: 5px;
+            font-size: 22px;
+            color: #444;
+        }
+
+        .btn-bell,
+        .btn-fullscreen {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .btn-bell-badge {
+            position: absolute;
+            right: 0;
+            top: -2px;
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background: #f56c6c;
+            color: #606266;
+        }
+
+        .btn-bell .el-icon-bell {
+            font-size: 22px;
+            color: #606266;
+        }
+
+        .user-name {
+            margin-left: 10px;
+        }
+
+        .user-avator {
+            margin-left: 20px;
+        }
+
+            .user-avator img {
+                display: block;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+            }
+
+        .el-dropdown-link {
+            /* color: #fff; */
+            cursor: pointer;
+        }
+
+        .el-dropdown-menu__item {
+            text-align: center;
+        }
+
+        /*tags*/
+        .tags {
+            position: relative;
+            height: 30px;
+            overflow: hidden;
+            background: #fff;
+            padding-right: 120px;
+            box-shadow: 0 5px 10px #ddd;
+        }
+
+            .tags ul {
+                box-sizing: border-box;
+                width: 100%;
+                height: 100%;
+            }
+
+        .tags-li {
+            float: left;
+            margin: 3px 5px 2px 3px;
+            border-radius: 3px;
+            font-size: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            height: 23px;
+            line-height: 23px;
+            border: 1px solid #e9eaec;
+            background: #fff;
+            padding: 0 5px 0 12px;
+            vertical-align: middle;
+            color: #666;
+            -webkit-transition: all .3s ease-in;
+            -moz-transition: all .3s ease-in;
+            transition: all .3s ease-in;
+        }
+
+            .tags-li:not(.active):hover {
+                background: #f8f8f8;
+            }
+
+            .tags-li.active {
+                color: #fff;
+                background: #409EFF;
+            }
+
+        .tags-li-title {
+            float: left;
+            max-width: 80px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-right: 5px;
+            color: #666;
+        }
+
+        .tags-li.active .tags-li-title {
+            color: #fff;
+        }
+
+        .tags-close-box {
+            position: absolute;
+            right: 0;
+            top: 0;
+            box-sizing: border-box;
+            padding-top: 1px;
+            text-align: center;
+            width: 110px;
+            /* height: 30px; */
+            line-height: 30px;
+            background: #fff;
+            /* box-shadow: -3px 0 15px 3px rgba(0, 0, 0, .1); */
+            z-index: 10;
+        }
+    </style>
+
+
+
+    <script type="text/javascript">
+
+
+    </script>
+
+</head>
+<body>
+    <div id="app" v-cloak=v-cloak>
+        <div class="wrapper" :class="{'hideSidebar':collapse,'openSidebar':!collapse}">
+            <!--菜单-->
+            <div class="sidebar-container ">
+                <div class="sidebar">
+
+                    <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+                        <transition name="sidebarLogoFade">
+                            <a v-if="collapse" key="collapse" class="sidebar-logo-link" href="/">
+                                <img v-if="logo" :src="logo" class="sidebar-logo" />
+                                <h1 v-else=v-else class="sidebar-title">{{ title }} </h1>
+                            </a>
+                            <a v-else=v-else key="expand" class="sidebar-logo-link" href="/">
+                                <img v-if="logo" :src="logo" class="sidebar-logo" />
+                                <h1 class="sidebar-title">{{ title }} </h1>
+                            </a>
+                        </transition>
+                    </div>
+
+                    @*<logo :collapse="collapse" />*@
+                    <el-scrollbar class="scrollbar-wrapper">
+                        <el-menu class="sidebar-el-menu"
+                                 :collapse="collapse"
+                                 background-color="#2b2f3a"
+                                 text-color="rgb(191, 187, 187)"
+                                 active-text-color="#20a0ff"
+                                 :default-active="curTag"
+                                 unique-opened=unique-opened>
+                            <template v-for="item in menus">
+
+
+                                <template v-if="item.subs">
+                                    <el-submenu :index="item.path" :key="item.path">
+                                        <template slot="title">
+                                            <i :class="item.icon"></i>
+                                            <span slot="title">{{ item.title }}</span>
+                                        </template>
+                                        <template v-for="subItem in item.subs">
+                                            <el-submenu v-if="subItem.subs"
+                                                        :index="subItem.path"
+                                                        :key="subItem.path">
+                                                <template slot="title">
+                                                    <i :class="subItem.icon"></i>
+                                                    <span slot="title">
+                                                        {{ subItem.title }}
+                                                    </span>
+                                                </template>
+                                                <el-menu-item v-for="(threeItem,i) in subItem.subs"
+                                                              :key="i"
+                                                              :index="threeItem.path" v-on:click="toFrame(threeItem)">
+                                                    <i :class="threeItem.icon"></i>
+                                                    <span slot="title">
+                                                        {{ threeItem.title }}
+
+                                                    </span>
+                                                </el-menu-item>
+                                            </el-submenu>
+                                            <el-menu-item v-else=v-else
+                                                          :index="subItem.path"
+                                                          :key="subItem.path" v-on:click="toFrame(subItem)">
+                                                <i :class="subItem.icon"></i>
+                                                <span slot="title">
+                                                    {{ subItem.title }}
+                                                </span>
+                                            </el-menu-item>
+                                        </template>
+                                    </el-submenu>
+                                </template>
+                                <template v-else=v-else>
+                                    <el-menu-item :index="item.path" :key="item.index" v-on:click="toFrame(item)">
+                                        <i :class="item.icon"></i>
+                                        <span slot="title">{{ item.title }}</span>
+                                    </el-menu-item>
+                                </template>
+                            </template>
+                        </el-menu>
+                    </el-scrollbar>
+                </div>
+            </div>
+
+            <div class='main-container' :class="{'content-collapse':collapse}">
+                <div class="header">
+                    <!-- 折叠按钮 -->
+                    <div class="collapse-btn" v-on:click="collapseChage">
+                        <i v-if="!collapse" class="el-icon-s-fold"></i>
+                        <i v-else=v-else class="el-icon-s-unfold"></i>
+                    </div>
+
+
+                    <div class="header-right">
+
+
+                        <div class="header-user-con">
+                            <!-- 全屏显示 -->
+                            <div class="btn-fullscreen" v-on:click="handleFullScreen">
+                                <el-tooltip effect="dark" :content="fullscreen?`取消全屏`:`全屏`" placement="bottom">
+                                    <i class="el-icon-rank"></i>
+                                </el-tooltip>
+                            </div>
+                            <!-- 消息中心 -->
+                            <div class="btn-bell">
+                                <el-tooltip effect="dark"
+                                            :content="message?`有${message}条未读消息`:`消息中心`"
+                                            placement="bottom">
+                                    <i class="el-icon-bell"></i>
+                                </el-tooltip>
+                                <span class="btn-bell-badge" v-if="message"></span>
+                            </div>
+                            <!-- 用户头像 -->
+                            <div class="user-avator">
+                                <img src="~/images/touxiang.jpg" />
+                            </div>
+                            <!-- 用户名下拉菜单 -->
+                            <el-dropdown class="user-name" v-on:click="handleCommand">
+                                <span class="el-dropdown-link">
+                                    {{userInfo.loginName}}
+                                    <i class="el-icon-caret-bottom"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <a href="#" target="_blank">
+                                        <el-dropdown-item>个人中心</el-dropdown-item>
+                                    </a>
+                                    <el-dropdown-item divided=divided command="loginout">退出登录</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="content-box" style="height:100%">
+
+
+                    <div class="tags">
+                        <ul>
+                            <li class="tags-li" v-for="(item,index) in tagsList" :class="{'active': item.path==curTag}" :key="index">
+                                <a v-on:click="toFrame(item)" class="tags-li-title">
+                                    {{item.title}}
+                                </a>
+                                <span class="tags-li-icon" v-on:click="closeTags(index)"><i class="el-icon-close"></i></span>
+                            </li>
+                        </ul>
+                        <div class="tags-close-box">
+
+
+
+
+                            <el-dropdown v-on:command="handleTags">
+                                <span class="el-dropdown-link">
+                                    标签选项
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
+                                </span>
+                                <el-dropdown-menu size="small" slot="dropdown">
+                                    <el-dropdown-item command="other">关闭其他</el-dropdown-item>
+                                    <el-dropdown-item command="all">关闭所有</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                    </div>
+
+
+                    <div class="content">
+                        <!--内容-->
+                        <iframe v-for="(item,index) in tagsList" frameborder="no" width="100%" height="100%" border="0" marginheight="0" marginwidth="0" :id="'frame'+item.path" :key="item.path" v-show="item.path==curTag" scrolling="auto" frameborder="0" :src="item.path"></iframe>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- import Vue before Element -->
+    <script src="~/v/js/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="~/v/element-ui/lib/index.js"></script>
+
+    <script src="~/v/js/axios.min.js"></script>
+    <script src="~/v/utils/request.js"></script>
+    <script type="text/javascript">
+
+
+
+
+        var vueModel = {
+            title: 'Zoomtel system',
+            logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png',
+            curTag: "",
+            userInfo: {
+                loginName: "admin"
+            },
+            fullscreen: false,
+            message: 2,
+            tagsList: [],
+            menus: [],
+            collapse: false,
+            contentHeight: 0
+        };
+     var indexVue=   new Vue({
+            el: '#app',
+            data: vueModel,
+            created() {
+                this.getMenus();
+                var AllHeight = document.body.clientHeight;
+                console.error(AllHeight)
+                var bodyHeight = AllHeight - 80;
+                this.contentHeight = bodyHeight;
+                //console.error("body:" + bodyHeight);
+                this.tagsList.push({
+                    title: "首页",
+                    path: "/admin/home/main"
+                });
+                this.curTag = "/admin/home/main";
+            },
+            methods: {
+
+                getMenus: function () {
+                    var that = this;
+                    request.get("/admin/Menu/UserTree").then(res => {
+                        var result = res.data;
+                        if (result.code == 1) {
+                            var menus = result.data;
+                            var items = that.bindMenus(menus);
+
+                            that.menus = items;
+                        }
+                    });
+                },
+                bindMenus: function (menus) {
+                    var that = this;
+                    var items = [];
+                    for (var i = 0; i < menus.length; i++) {
+                        var item = menus[i];
+                        var newitem = {
+                            icon: item.iconCls,
+                            path: item.item.url != null ? item.item.url : item.id.toString(),
+                            title: item.text
+                        };
+                        if (item.children && item.children.length > 0) {
+                            newitem.subs = that.bindMenus(item.children);
+                        }
+                        items.push(newitem);
+                    }
+                    return items;
+                },
+                // 全屏事件
+                handleFullScreen() {
+                    let element = document.documentElement;
+                    if (this.fullscreen) {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.webkitCancelFullScreen) {
+                            document.webkitCancelFullScreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        }
+                    } else {
+                        if (element.requestFullscreen) {
+                            element.requestFullscreen();
+                        } else if (element.webkitRequestFullScreen) {
+                            element.webkitRequestFullScreen();
+                        } else if (element.mozRequestFullScreen) {
+                            element.mozRequestFullScreen();
+                        } else if (element.msRequestFullscreen) {
+                            // IE11
+                            element.msRequestFullscreen();
+                        }
+                    }
+                    this.fullscreen = !this.fullscreen;
+                },
+                handleCommand: function () {
+
+                    if (command == 'loginout') {
+                        localStorage.removeItem('ms_username');
+                        //this.$router.push('/login');
+                    }
+                },
+                collapseChage: function () {
+                    this.collapse = !this.collapse;
+
+                },
+                //Tags
+                toFrame: function (item) {
+                    //console.log(item);
+                    this.addTag(item);
+                },
+                addTag: function (item) {
+                    this.curTag = item.path;
+                    var result = this.tagsList.filter(function (m) {
+                        return m.path == item.path;
+
+                    });
+
+                    if (result && result.length == 1) {
+
+                    } else {
+                        this.tagsList.forEach(function (m) {
+                            m.visible = false;
+
+                        });
+                        item.visible = true;
+                        this.tagsList.push(item);
+
+                    }
+
+                },
+                handleTags(command) {
+                    command === 'other' ? this.closeOther() : this.closeAll();
+                },
+                // 关闭单个标签
+                closeTags(index) {
+                    const delItem = this.tagsList.splice(index, 1)[0];
+                    const item = this.tagsList[index] ? this.tagsList[index] : this.tagsList[index - 1];
+                    if (item) {
+                        this.curTag = item.path;
+                        //delItem.path === this.$route.fullPath && this.$router.push(item.path);
+                    } else {
+                        //this.$router.push('/');
+                    }
+                },
+                // 关闭全部标签
+                closeAll() {
+                    this.tagsList = [];
+                    // this.$router.push('/');
+                },
+                // 关闭其他标签
+                closeOther() {
+                    const curItem = this.tagsList.filter(item => {
+                        return item.path === this.curTag;
+                    })
+                    this.tagsList = curItem;
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

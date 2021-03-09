@@ -1,0 +1,420 @@
+﻿
+@{
+    ViewData["Title"] = "Main";
+    Layout = "~/Areas/Admin/Views/Shared/_VueLayout.cshtml";
+}
+@section header{
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+
+    <style>
+        .panel {
+            background-color: #F8F8F8;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+            box-shadow: 0 1px 1px rgba(0,0,0,.05);
+        }
+
+        .panel-body {
+            padding: 10px;
+        }
+
+        .el-col {
+            margin-bottom: 10px;
+        }
+
+
+        .menu-item {
+            border-radius: 3px;
+            -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+            box-shadow: 0 1px 1px rgba(0,0,0,.05);
+            background: #F8F8F8;
+            border: 1px solid transparent;
+            padding: 10px;
+            text-align: center;
+            font-size: 30px;
+            color: #24292e;
+            cursor: pointer;
+        }
+
+            .menu-item span {
+                display: block;
+                font-size: 16px;
+                margin-top: 10px;
+                padding: 7px
+            }
+        .charts_syl{ width:100%; height:350px; margin:0 auto}
+        .charts_xd {
+            width: 100%;
+            height: 350px;
+            margin: 0 auto
+        }
+    </style>
+
+}
+<div id="app">
+    <div id='wrapper'>
+        <div class="container">
+
+            <el-row :gutter="20">
+
+                <el-col :span="12">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <i class="el-icon-s-order"></i>  信息统计
+                        </div>
+                        <div class="">
+                            <el-row :gutter="10">
+                                <el-col :span="12">
+                                    <div class="panel">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <el-tag type="success" style="float:right">实时</el-tag>
+                                                <h5>用户统计</h5>
+                                            </div>
+                                            <div class="panel-content">
+                                                <h1 class="no-margins">1234</h1>
+                                                <small>当前分类总记录数</small>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </el-col>
+                                <el-col :span="12">
+
+                                    <div class="panel">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <el-tag type="success" style="float:right">实时</el-tag>
+                                                <h5>用户统计</h5>
+                                            </div>
+                                            <div class="panel-content">
+                                                <h1 class="no-margins">1234</h1>
+                                                <small>当前分类总记录数</small>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </el-col>
+
+                                <el-col :span="12">
+
+                                    <div class="panel">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <el-tag type="success" style="float:right">实时</el-tag>
+                                                <h5>用户统计</h5>
+                                            </div>
+                                            <div class="panel-content">
+                                                <h1 class="no-margins">1234</h1>
+                                                <small>当前分类总记录数</small>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </el-col>
+
+                                <el-col :span="12">
+
+                                    <div class="panel">
+                                        <div class="panel-body">
+                                            <div class="panel-title">
+                                                <el-tag type="success" style="float:right">实时</el-tag>
+                                                <h5>用户统计</h5>
+                                            </div>
+                                            <div class="panel-content">
+                                                <h1 class="no-margins">1234</h1>
+                                                <small>当前分类总记录数</small>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </el-col>
+                            </el-row>
+
+
+
+
+                        </div>
+
+                    </el-card>
+                </el-col>
+                <el-col :span="12">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <i class="el-icon-s-order"></i>  快捷入口
+                        </div>
+                        <div class="">
+
+                            <el-row :gutter="10">
+                                <el-col :span="6" v-for="item in OftenList">
+                                    <div class="menu-item" v-on:click="toFrame(item)">
+                                        <i :class=" item.icon"></i>
+                                        <span>{{ item.title }}</span>
+                                    </div>
+
+                                </el-col>
+
+
+                            </el-row>
+
+
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+
+
+            <el-row :gutter="20">
+
+                <el-col :span="12">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <i class="el-icon-s-order"></i>  立库储位使用率
+
+                        </div>
+                        <div class="body">
+                            <div class="charts_syl"  ref="charts_syl">
+
+
+
+                            </div>
+
+                        </div>
+
+
+                    </el-card>
+                </el-col>
+
+                <el-col :span="12">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <i class="el-icon-s-order"></i>  巷道储位使用率
+
+                        </div>
+                        <div class="body">
+                            <div class="charts_xd" ref="charts_xd">
+
+
+
+                            </div>
+
+                        </div>
+
+                    </el-card>
+                </el-col>
+
+            </el-row>
+        </div>
+
+    </div>
+
+</div>
+
+
+@section footer{
+    <script type="text/javascript">
+        Vue.prototype.$echarts = echarts
+
+        var vue = new Vue({
+            el: "#app",
+            data: {
+                OftenList: [
+                ]
+
+            },
+            mounted() {
+                this.InitChartsLyl();
+                this.InitChartsLanewayLoadPercent();
+            },
+            created() {
+                this.getOftenList();
+
+               
+            },
+            methods: {
+                toFrame: function (item) {
+                    parent.indexVue.toFrame(item);
+
+                },
+                InitChartsLanewayLoadPercent: function () {
+                    var that = this;
+                    request.get("/wms/Atscell/GetLanewayLoadPercent", {
+
+                    }).then(res => {
+                        var result = res.data;
+                        if (result.code == 1) {
+                            var xAxis = [];
+                            var series = [];
+                            var kx_series_data = [];
+
+                            var zh_series_data = [];
+                            for (var i = 0; i < result.data.length; i++) {
+                                var item = result.data[i];
+                                xAxis.push(item.lanewayName);
+
+                                kx_series_data.push(100-  item.loadPercent);
+                                zh_series_data.push(item.loadPercent);
+                            }
+                            series.push({
+                                name: "空闲数",
+                                type: 'bar',
+                                stack: '比例',
+                                data: kx_series_data
+                            });
+                            series.push({
+                                name: "载货数",
+                                type: 'bar',
+                                stack: '比例',
+                                data: zh_series_data
+                              
+                            });
+
+                            var myChart_xd = that.$echarts.init(that.$refs.charts_xd);
+                            // 指定图表的配置项和数据
+                            var option_xd = option = {
+                                tooltip: {
+                                    trigger: 'axis',
+                                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                    },
+                                    formatter: function (params, ticket, callback) {
+                                        console.log(params);
+                                        var showHtm = "";
+                                        for (var i = 0; i < params.length; i++) {
+                                            //x轴名称
+                                            var name = params[i].axisValue;
+                                            var num = params[i].value;
+                                        
+                                            showHtm +=name+":"+num +'% <br>'
+                                        }
+                                        return showHtm;
+                                    }
+                                },
+                                legend: {
+                                    data: ['空闲数','载货数']
+                                },
+
+                                xAxis: {
+                                    data: xAxis,
+                                       name: "巷道",//坐标轴名称。
+                                    nameLocation: 'end',//坐标轴名称显示位置。
+                                    axisLabel: {//坐标轴刻度标签的相关设置。
+                                        interval: 0,
+                                        rotate: "45"
+                                    }
+                                },
+                                yAxis: {
+
+                                    type: 'value'
+                                },
+                                series: series
+                            };
+
+                            // 使用刚指定的配置项和数据显示图表。
+                            myChart_xd.setOption(option_xd);
+
+                        }
+                    });
+
+                },
+                InitChartsLyl: function () {
+                    var that = this;
+                    request.get("/wms/Atscell/GetPercent", {
+
+                    }).then(res => {
+                        var result = res.data;
+                        if (result.code == 1) {
+                            var myChart = that.$echarts.init(that.$refs.charts_syl);
+                            // 指定图表的配置项和数据
+                            var option = {
+                                title: {
+                                    text: '储位利用情况'
+                                },
+                                series: [
+                                    {
+                                        name: '储位利用情况',
+                                        type: 'pie',    // 设置图表类型为饼图
+                                        radius: '55%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+                                        data: [          // 数据数组，name 为数据项名称，value 为数据项值
+                                            { value: result.data.loadnum, name: '载货储位' },
+                                            { value: (result.data.totalnum- result.data.loadnum), name: '空闲储位' },
+                                        ],
+                                        itemStyle: {
+                                            emphasis: {
+                                                shadowBlur: 10,
+                                                shadowOffsetX: 0,
+                                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                            },
+                                            // 这里做改变
+                                            normal: {
+                                                label: {
+                                                    show: true,
+                                                    formatter: '{b} : {c} ({d}%)'
+                                                },
+                                                labelLine: {
+                                                    show: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            };
+                            // 使用刚指定的配置项和数据显示图表。
+                            myChart.setOption(option);
+
+
+
+                        }
+
+                    })
+                },
+                bindData: function () {
+
+
+                },
+                getOftenList: function () {
+
+                    var that = this;
+                    request.post("/admin/Menu/Query", {
+                        PageModel: {
+                            page: 1, rows: 100
+                        }
+
+                    }).then(res => {
+                        var result = res.data;
+                        if (result.code == 1) {
+                            var menus = result.data.rows;
+
+                            var items = [];
+
+                            for (var i = 0; i < menus.length; i++) {
+
+                                var item = menus[i];
+                                if (!item.often) {
+                                    continue;
+                                }
+                                var newitem = {
+                                    icon: item.icon,
+                                    path: item.url != null ? item.url : item.id.toString(),
+                                    title: item.menuName
+                                };
+                                if (newitem.icon != null && newitem.icon != "") {
+                                    items.push(newitem);
+                                    if (items.length == 8) {
+                                        break;
+                                    }
+                                }
+
+                            }
+                            that.OftenList = items;
+                        }
+                    });
+
+                }
+
+            }
+        });
+    </script>
+}

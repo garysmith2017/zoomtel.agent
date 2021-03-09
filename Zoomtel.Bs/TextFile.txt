@@ -1,0 +1,8 @@
+﻿更新数据库 选择程序包管理控制台
+
+Add-Migration Init -- init为本次更新取得名字
+
+update-database Init --执行Init更新
+
+//数据库生成实体
+Scaffold-DbContext "Data Source=192.168.3.18;Initial Catalog=zoomtel;User ID=sa;Password=sasa;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models  -ContextDir Context -Context DefaultDbContext -Force

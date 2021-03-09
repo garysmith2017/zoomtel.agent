@@ -1,0 +1,206 @@
+﻿
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <title>仓储管理系统</title>
+    <link rel="stylesheet" href="~/v/element-ui/lib/theme-chalk/index.css">
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-image: url(/images/loginbg.png);
+            /*background-size: 100%;*/
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 1000px;
+            z-index: -10;
+            zoom: 1;
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            background-position: center 0;
+        }
+
+        .el-card__header {
+            background: #148be4; color:floralwhite; font-weight:bold; position:relative
+        }
+            .el-card__header .bg1 {
+                display: inline-block;
+                width: 74px;
+                height: 74px;
+                background: #fff;
+                opacity: .1;
+                border-radius: 0 74px 0 0;
+                position: absolute;
+                left: 0;
+                top: 23px;
+            }
+        .bg2 {
+            display: inline-block;
+            width: 94px;
+            height: 94px;
+            background: #fff;
+            opacity: .1;
+            border-radius: 50%;
+            position: absolute;
+            right: -16px;
+            top: -16px;
+        }
+        .box-card {
+            width: 480px;
+            margin: 150px auto;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .footer {
+            left: 0;
+            bottom: 0;
+            color: #fff;
+            width: 100%;
+            position: FIXED;
+            text-align: center;
+            line-height: 30px;
+            padding-bottom: 10px;
+            text-shadow: #000 0.1em 0.1em 0.1em;
+            font-size: 14px;
+            position: fixed;
+
+
+        }
+
+   
+            .footer a, .footer span {
+                color: #fff;text-decoration:none
+            }
+    </style>
+
+</head>
+
+
+<body>
+    <div id="app" v-cloak>
+        <div class="login-wrap">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>Zoomtel WMS 管理系统</span>
+                    <span class="bg1"></span>
+                    <span class="bg2"></span>
+
+                    <el-button style="float: right; padding: 3px 0" type="text">忘记密码</el-button>
+                </div>
+                <el-form :model="param" ref="login" :rule="rules" label-width="0px" class="ms-content">
+                    <el-form-item prop="loginname">
+                        <el-input v-model="param.loginname" placeholder="用户名">
+                            <el-button slot="prepend" icon="el-icon-user"></el-button>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item prop="loginpwd">
+                        <el-input type="password"
+                                  placeholder="密码"
+                                  v-model="param.loginpwd"
+                                  v-on:keyup.enter.native="submitForm()">
+                            <el-button slot="prepend" icon="el-icon-view"></el-button>
+                        </el-input>
+                    </el-form-item>
+                    <div class="login-btn">
+                        <el-button type="primary" v-on:click="submitForm()">登录</el-button>
+
+                        <el-button type="warning" v-on:click="submitForm()">重置</el-button>
+
+                    </div>
+                    <p class="login-tips"></p>
+                </el-form>
+            </el-card>
+        </div>
+
+        <div class="footer">
+
+            ©版权所有 2011-2020 湖南中特信息技术有限公司<span class="padding-5">|</span>
+        </div>
+    </div>
+    <!-- import Vue before Element -->
+    <script src="~/v/js/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="~/v/element-ui/lib/index.js"></script>
+    <script src="~/v/js/axios.min.js"></script>
+    <script src="~/v/utils/request.js"></script>
+    <script type="text/javascript">
+        new Vue({
+            el: '#app', 
+            data: {
+                param: {
+                    loginname: 'admin',
+                    loginpwd: '123456',
+                },
+                rules: {
+                    loginname: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+                    loginpwd: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+                }
+            },
+            methods: {
+                submitForm() {
+                    var that = this;
+                    this.$refs.login.validate(valid => {
+                        if (valid) {
+
+                            const loading = that.$loading({
+                                lock: true,
+                                text: '系统登陆中',
+                                spinner: 'el-icon-loading',
+                                background: 'rgba(0, 0, 0, 0.7)'
+                            });
+
+                            request.post('/admin/auth/gettoken', {
+                                loginname: this.param.loginname,
+                                loginpwd: this.param.loginpwd
+
+                            }).then(function (res) {
+
+                                console.log("tokenresult:" + JSON.stringify(res.data));
+                                if (res.data.code == 1) {
+                                    //setAccessToken(res.data.data.access_token);
+                                    that.$message.success('登录成功');
+
+                                    setTimeout(function () {
+
+                                        loading.close();
+                                        location.href = '/admin/home/index';
+
+                                    }, 1200);
+
+                                } else {
+                                    loading.close();
+
+                                    that.$message.error(res.data.msg);
+
+                                }
+
+                            })
+
+                        } else {
+                            this.$message.error('请输入账号和密码');
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+            }
+        })
+
+    </script>
+</body>
+</html>

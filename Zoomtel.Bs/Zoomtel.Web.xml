@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Zoomtel.Web</name>
+    </assembly>
+    <members>
+        <member name="T:Zoomtel.Web.Areas.Admin.Controllers.AccountController">
+            <summary>
+            账户接口
+            </summary>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.AccountController.ResetPassword(System.Guid)">
+            <summary>
+            重置密码
+            </summary>
+            <param name="uid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.AccountController.Query(Zoomtel.Persist.Account.Models.AccountQueryModel)">
+            <summary>
+            查询
+            </summary>
+            <param name="model">账户查询模型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.AuditInfoController.Query(Zoomtel.Persist.AuditInfo.Models.AuditInfoQueryModel)">
+            <summary>
+            查询数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.AuthController.GetToken(Zoomtel.Service.Account.ViewModels.AccountLoginModel)">
+            <summary>
+            根据用户名密码获取token
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.LoginLogController.Query(Zoomtel.Persist.LoginLog.Models.LoginLogQueryModel)">
+            <summary>
+            查询数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.MenuController.VisibleChange(System.Int32,System.Boolean)">
+            <summary>
+            修改菜单显示状态
+            </summary>
+            <param name="id">主键</param>
+            <param name="visible">是否显示</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.MenuController.OftenChange(System.Int32,System.Boolean)">
+            <summary>
+            修改菜单常用状态
+            </summary>
+            <param name="id">主键</param>
+            <param name="often">是否显示</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.RoleController.Query(Zoomtel.Persist.Role.Models.RuleQueryModel)">
+            <summary>
+            查询数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.TaskController.Query(Zoomtel.Persist.Quartz.Model.TaskQueryModel)">
+            <summary>
+            查询数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.TaskController.Log(Zoomtel.Persist.Quartz.Model.TaskLogQueryModel)">
+            <summary>
+            查询数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Admin.Controllers.TaskGroupController.Query(Zoomtel.Persist.Quartz.Model.TaskGroupQueryModel)">
+            <summary>
+            查询数据
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.AtscellController.Update(System.String,System.Int32,System.Int32)">
+            <summary>
+            对弹出框的修改进行保存
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+            <param name="workStatus"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.AtscellController.ChangeStatus(System.String,System.Int32)">
+            <summary>
+            对储位状态的修改
+            </summary>
+            <param name="ids"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.AtscellController.Query(Zoomtel.Persist.Wms.Base.Models.AtscellQueryModel)">
+            <summary>
+            查询
+            </summary>
+            <param name="model">储位查询模型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.CellTypeController.Query(System.String)">
+            <summary>
+            查询
+            </summary>
+            <param name="layno"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.CellTypeController.ChangeStatus(System.String,System.Int32,System.String)">
+            <summary>
+            对储位类型状态的修改
+            </summary>
+            <param name="ids"></param>
+            <param name="status"></param>
+            <param name="layno"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.DeviceStatusController.ChangeStatus(System.String,System.Int32)">
+            <summary>
+            对储位状态的修改
+            </summary>
+            <param name="ids"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.DeviceStatusController.Query(Zoomtel.Persist.Wms.Base.Models.DeviceStatusQueryModel)">
+            <summary>
+            查询
+            </summary>
+            <param name="model">查询模型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.ItemController.Query(Zoomtel.Persist.Wms.Base.Models.ItemQueryModel)">
+            <summary>
+            查询
+            </summary>
+            <param name="model">查询模型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.ThroughController.Query(Zoomtel.Persist.Wms.Base.Models.ThroughQueryModel)">
+            <summary>
+            查询
+            </summary>
+            <param name="model">储位查询模型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Zoomtel.Web.Areas.Wms.Controllers.ThroughController.ChangeStatus(System.String,System.Int32)">
+            <summary>
+            对储位状态的修改
+            </summary>
+            <param name="ids"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<link rel="stylesheet" type="text/css" href="/Content/easyui/themes/bootstrap/easyui.css?v=1" />
+<link rel="stylesheet" type="text/css" href="/Content/easyui/themes/bootstrap/app.css" />
+
+@*<link rel="stylesheet" type="text/css" href="/Content/easyui/themes/default/easyui.css">*@
+<link rel="stylesheet" type="text/css" href="/Content/easyui/themes/icon.css" />
+<script type="text/javascript" src="/Content/easyui/jquery.min.js"></script>
+<script type="text/javascript" src="/Content/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/Content/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/Content/js/easyui-ext.js?v=12345"></script>
+<link rel="stylesheet" type="text/css" href="/Content/css/common.css?v=1234" />
+<script type="text/javascript" src="/Content/core/pub/commonJs.js?v=12345"></script>
+<!-- <script type="text/javascript" src="/Content/js/lhgdialog/lhgdialog.min.js"></script> -->
+
+@RenderSection("Scripts", required: false)
+<head>
+    <style>
+    </style>
+</head>
+
+<body>
+    <mini-profiler />
+
+    @RenderBody()
+
+
+</body>
+</html>

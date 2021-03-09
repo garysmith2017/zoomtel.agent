@@ -1,0 +1,45 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title>Zoomtel</title>
+    <link rel="stylesheet" href="~/v/element-ui/lib/theme-chalk/index.css" />
+    <link rel="stylesheet" href="~/v/css/main.css?v=1" />
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+    @RenderSection("header", required: false)
+
+</head>
+<body>
+    @*<mini-profiler />*@
+
+    @RenderBody()
+
+    <!-- import Vue before Element -->
+    <script src="~/v/js/vue.js"></script>
+    <!-- import JavaScript -->
+    <script src="~/v/element-ui/lib/index.js"></script>
+
+    <script src="~/v/js/axios.min.js"></script>
+
+    <script src="~/v/utils/request.js"></script>
+    <script src="~/v/utils/public.js"></script>
+    <script src="~/v/utils/vueHelper.js"></script>
+
+    <script type="text/javascript">
+        Vue.prototype.$ELEMENT = { size: 'mini', zIndex: 3000 };
+        window.onresize = function () {
+            console.log("发送改变：" + document.documentElement.clientHeight);
+
+        }
+    </script>
+    @RenderSection("footer", required: false)
+
+
+</body>
+</html>

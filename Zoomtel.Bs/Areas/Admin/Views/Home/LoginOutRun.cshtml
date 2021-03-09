@@ -1,0 +1,24 @@
+﻿
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_VueLayout.cshtml";
+}
+
+@section footer{
+    <SCRIPT language="JavaScript">
+        new Vue({
+            el: "#app",
+            created() {
+                this.$message.warning("用户登录信息已过期，请重新登录！");
+                setTimeout(function () {
+                    window.top.location.href = "/admin/account/login";
+                }, 2000);
+            },
+            methods: {
+              
+            }
+        });
+   
+   
+    </SCRIPT>
+
+}

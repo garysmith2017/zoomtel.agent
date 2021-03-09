@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\net\Zoomtel.Bs\Zoomtel.Bs\Zoomtel.Web.xml</DocumentationFile>
+    <OutputPath></OutputPath>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\Content\**" />
+    <Content Remove="wwwroot\Content\**" />
+    <EmbeddedResource Remove="wwwroot\Content\**" />
+    <None Remove="wwwroot\Content\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Attribute\" />
+    <Folder Include="Context\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="3.10.10" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Zoomtel.Auth\Zoomtel.Auth.csproj" />
+    <ProjectReference Include="..\Zoomtel.AutoMapper\Zoomtel.AutoMapper.csproj" />
+    <ProjectReference Include="..\Zoomtel.Cache.MemoryCache\Zoomtel.Cache.MemoryCache.csproj" />
+    <ProjectReference Include="..\Zoomtel.Cahe\Zoomtel.Cache.csproj" />
+    <ProjectReference Include="..\Zoomtel.Entity\Zoomtel.Entity.csproj" />
+    <ProjectReference Include="..\Zoomtel.Logging.Serilog\Zoomtel.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\Zoomtel.MiniProfiler\Zoomtel.MiniProfiler.csproj" />
+    <ProjectReference Include="..\Zoomtel.Persist\Zoomtel.Persist.csproj" />
+    <ProjectReference Include="..\Zoomtel.Service\Zoomtel.Service.csproj" />
+    <ProjectReference Include="..\Zoomtel.Swagger\Zoomtel.Swagger.csproj" />
+    <ProjectReference Include="..\Zoomtel.Utils\Zoomtel.Utils.csproj" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>

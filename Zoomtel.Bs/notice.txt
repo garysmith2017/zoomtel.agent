@@ -1,0 +1,4 @@
+﻿1、 OutBoundLineService Add 方法 2020-12-11
+
+这里如果不加await  则会报错 The connection does not support MultipleActiveResultSets.
+//大意是一个sqlconnect 经过下面的查序列调用后，不能再用于Update 所以要加await 等update后再进行处理
